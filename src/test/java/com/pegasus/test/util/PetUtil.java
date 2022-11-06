@@ -1,5 +1,9 @@
 package com.pegasus.test.util;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
 import java.util.UUID;
 
 import com.github.javafaker.Faker;
@@ -27,6 +31,25 @@ public class PetUtil {
 		pet.setPersonId(UUID.randomUUID());
 		pet.setImage(faker.animal().name().getBytes());
 		return pet;
+	}
+	
+	public Pet createPetPersonId(UUID personId) {
+		Pet pet = new Pet();
+		pet.setColor(faker.color().name());
+		pet.setName(faker.dog().name());
+		pet.setBreed(faker.dog().breed());
+		pet.setId(null);
+		pet.setPersonId(personId);
+		pet.setImage(faker.animal().name().getBytes());
+		return pet;
+	}
+	
+	public List<Pet> createPetList(int length) {
+		List<Pet> pets = new ArrayList<Pet>();
+		for (int i = 0; i < length; i++) {
+			pets.add(createPet());
+		}
+		return pets;
 	}
 
 	public Pet toModel(PetRequest petDto) {

@@ -2,6 +2,7 @@ package com.pegasus.test.service.impl;
 
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -100,10 +101,24 @@ public class PetServiceImplTest {
 		Assertions.assertNotNull(petDto);
 		Assertions.assertNotNull(petDto.getId());
 
-		Mockito.verify(petRepository, Mockito.times(1)).findById(Mockito.any(UUID.class));
+		Mockito.verify(petRepository, Mockito.times(1)).findById(Mockito.any(UUID.class)); 
 		Mockito.verify(petMapper, Mockito.times(1)).toFullDto(Mockito.any());
 	}
-	
+
+	@Test
+	public void test_FindByPersonId_Should_ReturnListPet_When_Invoked() {
+		Mockito.when(petRepository.findByPersonId(Mockito.any(UUID.class))).thenReturn(petUtil.createPetList(3));
+		Mockito.when(petMapper.toDto(Mockito.any(Pet.class))).thenAnswer(p -> petUtil.toDto((Pet) p.getArguments()[0]));
+		List<PetDto> petDto = petServiceImpl.findByPersonId(UUID.randomUUID());
+
+		Assertions.assertNotNull(petDto);
+		Assertions.assertEquals(3, petDto.size());
+
+		Mockito.verify(petRepository, Mockito.times(1)).findByPersonId(Mockito.any(UUID.class));
+		Mockito.verify(petMapper, Mockito.times(3)).toDto(Mockito.any());
+	}
+
+
 	@Test
 	public void test_ShowImage_Should_ReturnImagenPet_When_Invoked() {
 		Mockito.when(petRepository.findById(Mockito.any(UUID.class))).thenReturn(Optional.of(petUtil.createPet()));
@@ -136,10 +151,7 @@ public class PetServiceImplTest {
 
 	@Test
 	public void test_index_Should_ReturnPagePet_When_Invoked() {
-		Page<Pet> page = new PageImpl(Arrays.asList(
-				petUtil.createPet(),
-				petUtil.createPet(),
-				petUtil.createPet()));
+		Page<Pet> page = new PageImpl(petUtil.createPetList(3));
 
 		Mockito.when(petRepository.findAll(Mockito.any(Pageable.class))).thenReturn(page);
 		Mockito.when(petMapper.toDto(Mockito.any(Pet.class))).thenAnswer(p -> petUtil.toDto((Pet) p.getArguments()[0]));
@@ -153,5 +165,5 @@ public class PetServiceImplTest {
 		Mockito.verify(petMapper, Mockito.times(3)).toDto(Mockito.any());
 	}
 
-	
+
 }

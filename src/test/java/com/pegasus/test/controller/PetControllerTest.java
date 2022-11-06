@@ -1,5 +1,7 @@
 package com.pegasus.test.controller;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.UUID;
 
 import org.junit.jupiter.api.Assertions;
@@ -171,6 +173,40 @@ public class PetControllerTest {
 		PetImageDto petDto = objectMapper.readValue(res.andReturn().getResponse().getContentAsString(), PetImageDto.class);
 		Assertions.assertNotNull(petDto.getImageBase64());
 		petRepository.deleteById(pet.getId());
+	}
+	
+	@Test
+	public void test_FindByPersonId_Should_ListPet_When_Invoked() throws JsonProcessingException, Exception {
+		 UUID personId = UUID.randomUUID();
+		Pet pet = petUtil.createPetPersonId(personId);
+		Pet pet1 = petUtil.createPetPersonId(personId);
+		Pet pet2 = petUtil.createPetPersonId(personId);
+		
+		petRepository.saveAll(Arrays.asList(pet,pet1, pet2));
+		
+		ResultActions res =    mockMvc.perform(
+	            MockMvcRequestBuilders.get("/v1/pet/person/"+personId)
+	                .contentType(MediaType.APPLICATION_JSON)
+	                .accept(MediaType.APPLICATION_JSON)
+	                .header(AUTHORIZATION, BASIC)
+	        )
+	            .andDo(MockMvcResultHandlers.print())
+	            .andExpectAll(
+	                    MockMvcResultMatchers.status().isOk()
+	                
+	            );
+		
+		Assertions.assertNotNull(res);
+		Assertions.assertNotNull(res.andReturn());
+		Assertions.assertNotNull(res.andReturn().getResponse());
+		Assertions.assertNotNull(res.andReturn().getResponse().getContentAsString());
+		List<PetDto> petDtos = objectMapper.readValue(res.andReturn().getResponse().getContentAsString(),
+				objectMapper.getTypeFactory().constructCollectionType(List.class, PetDto.class));
+		Assertions.assertNotNull(petDtos);
+		Assertions.assertEquals(3, petDtos.size());
+		petRepository.deleteById(pet.getId());
+		petRepository.deleteById(pet1.getId());
+		petRepository.deleteById(pet2.getId());
 	}
 	
 	@Test

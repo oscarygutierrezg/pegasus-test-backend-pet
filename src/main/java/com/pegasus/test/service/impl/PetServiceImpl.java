@@ -1,6 +1,8 @@
 package com.pegasus.test.service.impl;
 
+import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import javax.persistence.EntityNotFoundException;
 
@@ -68,6 +70,11 @@ public class PetServiceImpl implements PetService {
 	public PetImageDto showImage(UUID uuid) {
 		Pet p = findById(uuid);
 		return petMapper.toImageDto(p);
+	}
+
+	@Override
+	public List<PetDto> findByPersonId(UUID personId) {
+		return petRepository.findByPersonId(personId).stream().map(petMapper::toDto).collect(Collectors.toList());
 	}
 
 }

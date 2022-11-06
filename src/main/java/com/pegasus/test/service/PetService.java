@@ -1,5 +1,6 @@
 package com.pegasus.test.service;
 
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.data.domain.Page;
@@ -15,6 +16,8 @@ public interface PetService {
 	PetDto update(UUID uuid, PetRequest petRequest);
 
 	Page<PetDto> index(Pageable pageable);
+	
+	List<PetDto> findByPersonId(UUID personId);
 
 	PetDto show(UUID uuid);
 	

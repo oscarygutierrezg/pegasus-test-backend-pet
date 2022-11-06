@@ -90,6 +90,15 @@ public class PetController {
 		return  ResponseEntity.ok().body(petService.showImage(uuid));
 	}
 	
+	@GetMapping(
+			value = "person/{personId}",
+			produces = MediaType.APPLICATION_JSON_VALUE
+			)
+	public  ResponseEntity<java.util.List<PetDto>>  findByPersonId(
+			@PathVariable(value = "personId") UUID personId) {
+		return  ResponseEntity.ok().body(petService.findByPersonId(personId));
+	}
+	
 	@DeleteMapping(
 			value = "/{uuid}",
 			produces = MediaType.APPLICATION_JSON_VALUE
