@@ -74,6 +74,7 @@ public class PetServiceImpl implements PetService {
 
 	@Override
 	public List<PetDto> findByPersonId(UUID personId) {
+		System.out.println("TEST");
 		return petRepository.findByPersonId(personId).stream().map(petMapper::toDto).collect(Collectors.toList());
 	}
 
